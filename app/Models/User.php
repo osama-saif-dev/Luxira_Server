@@ -7,13 +7,21 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Translatable\HasTranslations;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, HasTranslations;
 
 
     protected $guarded = [];
+
+    public $translatable = [
+        'first_name',
+        'last_name',
+        'city',
+        'address',
+    ];
 
     public function reviews(){
         return $this->hasMany(Review::class, 'user_id');

@@ -20,15 +20,47 @@ class AuthController extends Controller
 
     public function register(Register $request)
     {
-        $user = User::create([
-            'first_name' => $request->first_name,
-            'last_name' => $request->last_name,
-            'email' => $request->email,
-            'gender' => $request->gender,
-            'password' => Hash::make($request->password),
+        $locale = $request->header('Accept_Language');
+        $user = new User();
+        $user->setTranslations('first_name', [
+            'en' => $request->first_name_en,
+            'ar' => $request->first_name_ar
         ]);
+        $user->setTranslations('last_name', [
+            'en' => $request->last_name_en,
+            'ar' => $request->last_name_ar
+        ]);
+        $user->email = $request->email;
+        $user->gender = $request->gender;
+        $user->password = Hash::make($request->password);
+        $user->save();
+
         $token = $user->createToken('token')->plainTextToken;
-        return $this->data(compact('user', 'token'), 'Created Successfully', 201);
+        $data = [
+            'token' => $token,
+            'user' => [
+                'id' => $user->id,
+                'first_name' => $user->getTranslation('first_name', $locale),
+                'last_name' => $user->getTranslation('last_name', $locale),
+                'email' => $user->email,
+                'gender' => $user->gender,
+            ]
+        ];
+
+        $cookie = cookie(
+            'auth_data',
+            json_encode($data),
+            60 * 24,
+            '/',
+            null,
+            true, // secure
+            false, // httpOnly
+            false,
+            'Strict'
+        );
+
+        return response()->json(['message' => __('messages.create')], 201)
+            ->withCookie($cookie);
     }
 
     public function login(Login $request)
@@ -42,7 +74,7 @@ class AuthController extends Controller
             return $this->data(compact('user'), 'Email Must Be Verified', 404);
         }
         $user->token = $user->createToken('token')->plainTextToken;
-        $user->image_url = asset('images/users/'.$user->image);
+        $user->image_url = asset('images/users/' . $user->image);
         return $this->data(compact('user'), 'Login Successfully');
     }
 

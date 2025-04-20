@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 
 
 // User
-Route::prefix('/')->group(function () {
+Route::prefix('/')->middleware('check.lang')->group(function () {
 
     // Auth
     Route::post('/login', [AuthController::class, 'login']);
