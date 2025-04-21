@@ -2,86 +2,77 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\CheckEmail;
 use App\Http\Requests\Login;
+use App\Http\Requests\RefreshTokenRequest;
 use App\Http\Requests\Register;
 use App\Http\Requests\ResetPassword;
+use App\Models\RefreshToken;
 use App\Models\User;
 use App\Traits\HandleResponse;
-use Illuminate\Http\Request;
+use App\Traits\HandleToken;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 
 class AuthController extends Controller
 {
-    use HandleResponse;
+    use HandleResponse, HandleToken;
 
     public function register(Register $request)
     {
-        $locale = $request->header('Accept_Language');
-        $user = new User();
-        $user->setTranslations('first_name', [
-            'en' => $request->first_name_en,
-            'ar' => $request->first_name_ar
+        $user = User::create([
+            'first_name' => $request->first_name,
+            'last_name' => $request->last_name,
+            'email' => $request->email,
+            'gender' => $request->gender,
+            'password' => Hash::make($request->password)
         ]);
-        $user->setTranslations('last_name', [
-            'en' => $request->last_name_en,
-            'ar' => $request->last_name_ar
-        ]);
-        $user->email = $request->email;
-        $user->gender = $request->gender;
-        $user->password = Hash::make($request->password);
-        $user->save();
-
-        $token = $user->createToken('token')->plainTextToken;
-        $data = [
-            'token' => $token,
-            'user' => [
-                'id' => $user->id,
-                'first_name' => $user->getTranslation('first_name', $locale),
-                'last_name' => $user->getTranslation('last_name', $locale),
-                'email' => $user->email,
-                'gender' => $user->gender,
-            ]
-        ];
-
-        $cookie = cookie(
-            'auth_data',
-            json_encode($data),
-            60 * 24,
-            '/',
-            null,
-            true, // secure
-            false, // httpOnly
-            false,
-            'Strict'
-        );
-
-        return response()->json(['message' => __('messages.create')], 201)
-            ->withCookie($cookie);
+        $access_token = $this->generateNewAccessToken($user);
+        return $this->data(compact('access_token'), __("messages.create"), 201);
     }
 
     public function login(Login $request)
     {
         $user = User::where('email', $request->email)->first();
+
         if (!Hash::check($request->password, $user->password)) {
-            return $this->errorsMessage(['error' => 'Email Or Password Has Been Failed']);
+            return $this->errorsMessage(['error' => __('messages.password')]);
         }
+
         if (!$user->email_verified_at) {
-            $user->token = $user->createToken('token')->plainTextToken;
-            return $this->data(compact('user'), 'Email Must Be Verified', 404);
+            $access_token = $this->generateNewAccessToken($user);
+            return $this->data(compact('access_token'), __('messages.verify'), 404);
         }
-        $user->token = $user->createToken('token')->plainTextToken;
-        $user->image_url = asset('images/users/' . $user->image);
-        return $this->data(compact('user'), 'Login Successfully');
+
+        $access_token = $this->generateNewAccessToken($user);
+        $refresh_token = $this->storeRefreshToken($user);
+
+        return $this->data(compact('user', 'access_token', 'refresh_token'), __('messages.success_login'));
+    }
+
+    public function refreshToken(RefreshTokenRequest $request)
+    {
+        $user = Auth::user();
+        
+        $token = $this->isValidRefreshToken($user, $request->refresh_token);
+        
+        // here you should navigate to login page
+        if (!$token){
+            return $this->errorsMessage(['error' => __('messages.refresh_token')]);
+        }
+    
+        $access_token = $this->generateNewAccessToken($user);
+        $refresh_token = $this->storeRefreshToken($user);
+    
+        return $this->data(compact('user', 'access_token', 'refresh_token'), __('messages.update'));
     }
 
     public function logout()
     {
-        Auth::user()->currentAccessToken()->delete();
-        return $this->successMessage('Logout Successfully');
+        $user = Auth::user();
+        $user->currentAccessToken()->delete();
+        RefreshToken::where('user_id', $user->id)->delete();
+        return $this->successMessage(__('messages.logout'));
     }
 
     public function resetPassword(ResetPassword $request)
@@ -101,4 +92,5 @@ class AuthController extends Controller
         }
         return $this->errorsMessage(['error' => 'Email Or Token Is Not Valid']);
     }
+
 }

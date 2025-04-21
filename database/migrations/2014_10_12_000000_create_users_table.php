@@ -19,7 +19,7 @@ return new class extends Migration
             $table->enum('gender', ['m', 'f']);
             $table->enum('role', ['user', 'admin'])->default('user');
             $table->string('city')->nullable();
-            $table->string('image')->nullable();
+            $table->string('image')->default('default.jpg')->nullable();
             $table->string('phone')->nullable();
             $table->text('address')->nullable();
             $table->integer('age')->nullable();

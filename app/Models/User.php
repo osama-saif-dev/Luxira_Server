@@ -15,13 +15,16 @@ class User extends Authenticatable
 
 
     protected $guarded = [];
+    protected $appends = ['image_url'];
 
-    public $translatable = [
-        'first_name',
-        'last_name',
-        'city',
-        'address',
-    ];
+    public function getImageUrlAttribute(){
+        return asset('images/users/' . $this->image);
+    }
+
+    public function refreshTokne()
+    {
+        return $this->hasMany(RefreshToken::class);
+    }
 
     public function reviews(){
         return $this->hasMany(Review::class, 'user_id');
@@ -30,6 +33,32 @@ class User extends Authenticatable
     public function orders(){
         return $this->hasMany(Order::class);
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     /**
      * The attributes that should be hidden for serialization.

@@ -25,6 +25,7 @@ Route::prefix('/')->middleware('check.lang')->group(function () {
 
     // Auth
     Route::prefix('/auth')->middleware('auth:sanctum')->group(function () {
+        Route::post('/refresh-token', [AuthController::class, 'refreshToken']);
         Route::get('/logout', [AuthController::class, 'logout']);
         Route::get('/sendCode', [VerifyController::class, 'sendCode']);
         Route::post('/checkCode', [VerifyController::class, 'checkCode']);

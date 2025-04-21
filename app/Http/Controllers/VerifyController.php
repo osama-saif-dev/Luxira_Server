@@ -8,6 +8,7 @@ use App\Mail\SendCode;
 use App\Mail\SendCodeForgetPassword;
 use App\Models\User;
 use App\Traits\HandleResponse;
+use App\Traits\HandleToken;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -15,7 +16,7 @@ use Illuminate\Support\Facades\Password;
 
 class VerifyController extends Controller
 {
-    use HandleResponse;
+    use HandleResponse, HandleToken;
 
     public function sendCode()
     {
@@ -34,7 +35,7 @@ class VerifyController extends Controller
         // send mail to user authantication
         $stringCode = (string) $code;
         Mail::to($authanticated_user->email)->send(new SendCode($stringCode, $authanticated_user->first_name, $authanticated_user->last_name));
-        return $this->successMessage('Send Code Successfully');
+        return $this->successMessage(__('messages.success_code'));
     }
 
     public function checkCode(VerifyCode $request)
@@ -45,18 +46,20 @@ class VerifyController extends Controller
         $now = now();
 
         if ($request->code != $user->code) {
-            return $this->errorsMessage(['error' => 'Code Is Invalid']);
+            return $this->errorsMessage(['error' => __('messages.invalid_code')]);
         }
 
         if ($now > $user->code_expired_at) {
-            return $this->errorsMessage(['error' => 'Code Is Expired, Please Resend Code Again']);
+            return $this->errorsMessage(['error' => __('messages.expired_code')]);
         }
 
         $user->email_verified_at = $now;
         $user->save();
 
-        $user->image_url = asset('images/users/' . $user->image);
-        return $this->data(compact('user', 'token'), 'Verify Successfully');
+        $access_token = $this->generateNewAccessToken($user);
+        $refresh_token = $this->storeRefreshToken($user);
+
+        return $this->data(compact('user', 'access_token', 'refresh_token'), __('messages.verify'));
     }
 
     public function verifyForgetPassword(CheckEmail $request)
