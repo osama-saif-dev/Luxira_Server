@@ -59,7 +59,7 @@ class VerifyController extends Controller
         $access_token = $this->generateNewAccessToken($user);
         $refresh_token = $this->storeRefreshToken($user);
 
-        return $this->data(compact('user', 'access_token', 'refresh_token'), __('messages.verify'));
+        return $this->data(compact('user', 'access_token', 'refresh_token'), __('messages.success_verify'));
     }
 
     public function verifyForgetPassword(CheckEmail $request)
@@ -68,6 +68,6 @@ class VerifyController extends Controller
         $token = Password::createToken($user);
         $link = "http://localhost:3000/reset-password?token=" . urlencode($token) . "&email=" . urlencode($user->email);
         Mail::to($user->email)->send(new SendCodeForgetPassword($link, $user->first_name, $user->last_name));
-        return $this->successMessage('We Sent Route To Your Email, Please Check Your Email');
+        return $this->successMessage(__('messages.verify_forget_password'));
     }
 }

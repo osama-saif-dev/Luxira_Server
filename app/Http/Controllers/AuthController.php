@@ -88,9 +88,9 @@ class AuthController extends Controller
         );
         // التحقق من نجاح العملية
         if ($status === Password::PASSWORD_RESET) {
-            return $this->successMessage('Updated Successfully');
+            return $this->successMessage(__("messages.update"));
         }
-        return $this->errorsMessage(['error' => 'Email Or Token Is Not Valid']);
+        return $this->errorsMessage(['error' => __('messages.reset_password')]);
     }
 
 }

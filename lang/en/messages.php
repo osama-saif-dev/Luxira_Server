@@ -11,5 +11,7 @@ return [
     'verify' => 'Email Must Be Verified',
     'success_code' => 'Send Code Successfully',
     'invalid_code' => 'Code Is Invalid',
-    'expired_code' => 'Code Is Expired, Please Resend Code Again'
+    'expired_code' => 'Code Is Expired, Please Resend Code Again',
+    'verify_forget_password' => 'We Sent Route To Your Email, Please Check Your Email',
+    'reset_password' => 'Email Or Token Is Not Valid'
 ];
