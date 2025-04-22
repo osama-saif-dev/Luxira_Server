@@ -2,6 +2,7 @@
 
 return [
     'create' =>  'Created Successfully',
+    'delete' => 'Deleted Successfully',
     'success_login' => 'Login Successfully',
     'refresh_token' => 'Refresh token expired or invalid',
     'update' => 'Updated Successfully',
@@ -13,5 +14,7 @@ return [
     'invalid_code' => 'Code Is Invalid',
     'expired_code' => 'Code Is Expired, Please Resend Code Again',
     'verify_forget_password' => 'We Sent Route To Your Email, Please Check Your Email',
-    'reset_password' => 'Email Or Token Is Not Valid'
+    'reset_password' => 'Email Or Token Is Not Valid',
+    'check_is_admin' => 'You Must Be Admin To Make This ',
+
 ];

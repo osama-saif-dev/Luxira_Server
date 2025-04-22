@@ -69,7 +69,7 @@ return [
     ],
     'hex_color' => 'The :attribute field must be a valid hexadecimal color.',
     'image' => 'The :attribute field must be an image.',
-    'in' => 'المختار:attribute غير صحيح',
+    'in' => ':attribute المختار غير صحيح',
     'in_array' => 'The :attribute field must exist in :other.',
     'integer' => 'The :attribute field must be an integer.',
     'ip' => 'The :attribute field must be a valid IP address.',
@@ -192,7 +192,8 @@ return [
         'city' => 'المدينة بالعربى',
         'address' => 'العنوان بالعربى',
         'email' => 'هذا الايميل',
-        'refresh_token' => 'رمز التحديث'
+        'refresh_token' => 'رمز التحديث',
+        'role' => 'الدور'
     ], 
 
 ];

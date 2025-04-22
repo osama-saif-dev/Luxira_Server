@@ -1,29 +1,26 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\OfferController;
 use App\Http\Controllers\OrderController;
-use App\Http\Controllers\OrderItemController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\VerifyController;
 use App\Http\Controllers\WhishlistesController;
-use App\Models\Category;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 
-// User
+
 Route::prefix('/')->middleware('check.lang')->group(function () {
 
-    // Auth
+    // Auth And Verify
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/resetPassword', [AuthController::class, 'resetPassword']);
     Route::post('/verifyForgetPassword', [VerifyController::class, 'verifyForgetPassword']);
 
-    // Auth
     Route::prefix('/auth')->middleware('auth:sanctum')->group(function () {
         Route::post('/refresh-token', [AuthController::class, 'refreshToken']);
         Route::get('/logout', [AuthController::class, 'logout']);
@@ -70,7 +67,41 @@ Route::prefix('/')->middleware('check.lang')->group(function () {
         Route::delete('/delete/{id}', [OrderController::class, 'delete']);
     });
 
+    // Admin
+    Route::prefix('/admin')->middleware(['auth:sanctum', 'check.is.admin'])->group(function() {
+        
+        // Users
+        Route::prefix('/users')->group(function() {
+            Route::get('/', [AdminController::class, 'getUsers']);
+            Route::post('/store', [AdminController::class, 'storeUser']);
+            Route::post('/change_role/{id}', [AdminController::class, 'changeRole']);
+            Route::delete('/delete/{id}', [AdminController::class, 'deleteUser']);
+        });
+        
+        // Brands
+        Route::prefix('/brands')->group(function() {
+            Route::get('/', [AdminController::class, 'getBrands']);
+            Route::post('/store', [AdminController::class, 'storeBrand']);
+            Route::post('/update/{id}', [AdminController::class, 'updateBrand']);
+            Route::delete('/delete/{id}', [AdminController::class, 'deleteBrand']);
+        });
+
+        // Categories 
+        Route::prefix('/categories')->group(function() {
+            Route::get('/', [AdminController::class, 'getCategories']);
+            Route::post('/store', [AdminController::class, 'storeCategory']);
+            Route::post('/update/{id}', [AdminController::class, 'updateCategory']);
+            Route::delete('/delete/{id}', [AdminController::class, 'deleteCategory']);
+        });        
+
+        // Products
+        Route::prefix('/products')->group(function() {
+            Route::get('/', [AdminController::class, 'getProducts']);
+            Route::post('/store', [AdminController::class, 'storeProduct']);
+            Route::post('/update/{id}', [AdminController::class, 'updateProduct']);
+            Route::post('/change_product_status/{id}', [AdminController::class, 'changeProductStatus']);
+        });
+        
+    });
 
 });
-
-// Admin

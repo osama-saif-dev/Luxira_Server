@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->decimal('price', 10, 2);
-            $table->integer('quantity');
+            $table->integer('quantity')->default(1);
             $table->text('desc');
             $table->enum('status', ['active', 'un_active'])->default('active');
             $table->foreignId('brand_id')->constrained()->cascadeOnDelete();
