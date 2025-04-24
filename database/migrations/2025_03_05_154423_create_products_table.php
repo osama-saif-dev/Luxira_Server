@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->decimal('price', 10, 2);
+            $table->string('name')->unique();
+            $table->integer('price');
             $table->integer('quantity')->default(1);
             $table->text('desc');
             $table->enum('status', ['active', 'un_active'])->default('active');

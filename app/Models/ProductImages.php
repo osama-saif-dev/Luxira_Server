@@ -10,8 +10,14 @@ class ProductImages extends Model
     use HasFactory;
 
     protected $guarded = [];
+    protected $appends = ['image_url'];
+
+
+    public function getImageUrlAttribute(){
+        return asset('storage/images/products/' . $this->image);
+    }
 
     public function product(){
-        return $this->belongsTo(product::class, 'product_id');
+        return $this->belongsTo(product::class);
     }
 }

@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreUser extends FormRequest
+class StoreDiscount extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -21,13 +21,12 @@ class StoreUser extends FormRequest
      */
     public function rules(): array
     {
+        $discount_id = $this->route('id');
         return [
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
-            'email' => 'required|string|email|unique:users',
-            'role' => 'required|string|in:admin,user',
-            'gender' => 'required|string|in:m,f',
-            'password' => 'required|string|min:8|confirmed'
+            'code' => "required|integer|max_digits:5|unique:discounts,code,$discount_id,id",
+            'start_date' => 'required|date|after_or_equal:today',
+            'end_date' => 'required|date|after:start_time',
+            'price' => 'required|integer'
         ];
     }
 }

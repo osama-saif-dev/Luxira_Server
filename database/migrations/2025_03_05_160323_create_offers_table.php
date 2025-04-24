@@ -13,8 +13,7 @@ return new class extends Migration
     {
         Schema::create('offers', function (Blueprint $table) {
             $table->id();
-            $table->decimal('discount_percentage', 5, 2);
-            $table->decimal('discount_price', 10, 2)->nullable();
+            $table->integer('discount_percentage'); // 10 % - product price 
             $table->date('start_date');
             $table->date('end_date');
             $table->foreignId('product_id')->constrained()->cascadeOnDelete();

@@ -2,22 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Offer;
+use App\Models\Discount;
 use App\Traits\HandleResponse;
 use Illuminate\Http\Request;
 
-class OfferController extends Controller
+class DiscountController extends Controller
 {
     use HandleResponse;
 
-    public function index(){
-        $offers = Offer::all();
-        return $this->data(compact('offers'));
-    }
-
     public function cleanUp()
     {
-        Offer::where('end_date', '<', now())->delete();
+        Discount::where('end_date', '<', now())->delete();
         return $this->successMessage(__('messages.delete_offer'));
     }
     

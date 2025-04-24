@@ -10,44 +10,55 @@ class Product extends Model
     use HasFactory;
 
     protected $guarded = [];
-
-    public function brand(){
+    protected $hidden = ['pivot'];
+    
+    public function brand()
+    {
         return $this->belongsTo(Brand::class);
     }
 
-    public function subcategory(){
+    public function subcategory()
+    {
         return $this->belongsTo(Subcategory::class);
     }
 
-    public function offer(){
+    public function offer()
+    {
         return $this->hasOne(Offer::class);
     }
 
-    public function images(){
+    public function images()
+    {
         return $this->hasMany(ProductImages::class);
     }
 
-    public function colors(){
-        return $this->belongsToMany(Color::class, 'product_color')->withTimestamps();
-    }
-
-    public function sizes(){
-        return $this->belongsToMany(Size::class, 'product_size')->withTimestamps();
-    }
-
-    public function reviews(){
+    public function reviews()
+    {
         return $this->hasMany(Review::class);
     }
 
-    public function whishlistes(){
+    public function whishlistes()
+    {
         return $this->hasMany(Whishliste::class);
     }
 
-    public function carts(){
-        return $this->hasMany(Cart::class);
+    public function carts()
+    {
+        return $this->belongsToMany(Cart::class, 'product_carts');
     }
 
-    public function orderItem(){
+    public function sizes()
+    {
+        return $this->belongsToMany(Size::class, 'product_sizes');
+    }
+
+    public function colors()
+    {
+        return $this->belongsToMany(Color::class, 'product_colors');
+    }
+
+    public function orderItem()
+    {
         return $this->hasMany(OrderItems::class);
     }
 }

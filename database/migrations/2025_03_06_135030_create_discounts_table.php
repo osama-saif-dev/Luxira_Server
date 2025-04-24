@@ -14,8 +14,9 @@ return new class extends Migration
         Schema::create('discounts', function (Blueprint $table) {
             $table->id();
             $table->integer('code')->unique();
-            $table->timestamp('code_expired_at');
-            $table->decimal('price', 10, 2);
+            $table->date('start_date');
+            $table->date('end_date');
+            $table->integer('price');
             $table->timestamps();
         });
     }

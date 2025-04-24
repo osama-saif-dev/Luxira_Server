@@ -10,9 +10,17 @@ class Size extends Model
     use HasFactory;
 
     protected $guarded = [];
+    protected $hidden = ['pivot'];
 
-    public function products(){
-        return $this->belongsToMany(Product::class, 'product_size')->withTimestamps();
-    }
     
+    public function productSizes()
+    {
+        return $this->hasMany(ProductSize::class);
+    }
+
+    public function sizes()
+    {
+        return $this->belongsToMany(product::class, 'product_sizes');
+    }
+
 }

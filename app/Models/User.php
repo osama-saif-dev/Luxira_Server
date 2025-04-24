@@ -18,7 +18,7 @@ class User extends Authenticatable
     protected $appends = ['image_url'];
 
     public function getImageUrlAttribute(){
-        return asset('images/users/' . $this->image);
+        return asset('storage/images/users/' . $this->image);
     }
 
     public function refreshTokne()
@@ -34,7 +34,10 @@ class User extends Authenticatable
         return $this->hasMany(Order::class);
     }
 
-
+    public function cart()
+    {
+        return $this->hasOne(Cart::class);
+    }
 
 
 

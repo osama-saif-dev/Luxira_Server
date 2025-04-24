@@ -10,6 +10,12 @@ class Subcategory extends Model
     use HasFactory;
 
     protected $guarded = [];
+    protected $appends = ['image_url'];
+
+    public function getImageUrlAttribute()
+    {
+        return asset('storage/images/subcategories/' . $this->image);
+    }
 
     public function category(){
         return $this->belongsTo(Category::class);

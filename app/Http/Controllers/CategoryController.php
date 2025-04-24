@@ -11,10 +11,7 @@ class CategoryController extends Controller
     use HandleResponse;
 
     public function index(){
-        $categories = Category::all();
-        foreach($categories as $category){
-            $category->image_url = asset('images/categories/' . $category->image);
-        }
+        $categories = Category::where('status', 'active')->get();
         return $this->data(compact('categories'));
     }
     
