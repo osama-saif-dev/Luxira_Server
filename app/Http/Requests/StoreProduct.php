@@ -22,10 +22,12 @@ class StoreProduct extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|unique:products',
+            'name_en' => 'required|string|unique:products,name->en',
+            'name_ar' => 'required|string|unique:products,name->ar',
             'price' => 'required|numeric',
             'quantity' => 'required|integer|min:1',
-            'desc' => 'required|string',
+            'desc_en' => 'required|string',
+            'desc_ar' => 'required|string',
             'status' => 'required|in:active,un_active',
             'brand_id' => 'required|integer|exists:brands,id',
             'size_id' => 'required|array',

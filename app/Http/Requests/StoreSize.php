@@ -22,7 +22,8 @@ class StoreSize extends FormRequest
     public function rules(): array
     {
         return [
-            'size' => "required|string|unique:sizes",
+            'size_en' => "required|string|unique:sizes,size->en",
+            'size_ar' => "required|string|unique:sizes,size->ar",
         ];
     }
 }

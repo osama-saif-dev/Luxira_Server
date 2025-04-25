@@ -23,10 +23,12 @@ class UpdateProduct extends FormRequest
     {
         $product_id = $this->route('id');
         return [
-            'name' => "required|string|unique:products,name,$product_id,id",
+            'name_en' => "required|string|unique:products,name->en,$product_id,id",
+            'name_ar' => "required|string|unique:products,name->ar,$product_id,id",
             'price' => 'required|numeric',
             'quantity' => 'required|integer|min:1',
-            'desc' => 'required|string',
+            'desc_en' => 'required|string',
+            'desc_ar' => 'required|string',
             'status' => 'required|in:active,un_active',
             'brand_id' => 'required|integer|exists:brands,id',
             'size_id' => 'required|array',

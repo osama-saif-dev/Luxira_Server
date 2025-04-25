@@ -66,7 +66,7 @@ class VerifyController extends Controller
     {
         $user = User::where('email', $request->email)->first();
         $token = Password::createToken($user);
-        $link = "http://localhost:3000/reset-password?token=" . urlencode($token) . "&email=" . urlencode($user->email);
+        $link = "http://localhost:5173/setpassword?token=" . urlencode($token) . "&email=" . urlencode($user->email);
         Mail::to($user->email)->send(new SendCodeForgetPassword($link, $user->first_name, $user->last_name));
         return $this->successMessage(__('messages.verify_forget_password'));
     }

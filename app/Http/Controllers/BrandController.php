@@ -10,9 +10,13 @@ class BrandController extends Controller
 {
     use HandleResponse;
 
-    public function getBrands()
+    public function index(Request $request)
     {
-        $brands = Brand::where('status', 'active')->get();
+        $brands = Brand::where('status', 'active')->get()
+                ->map(function($brand){
+                    $brand->makeHidden(['name']);
+                    return $brand;
+                });
         return $this->data(compact('brands'));
     }
 }

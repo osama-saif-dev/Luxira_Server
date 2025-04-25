@@ -17,5 +17,6 @@ return [
     'reset_password' => 'البريد الإلكتروني أو الرمز غير صالح',
     'check_is_admin' => 'يجب ان تكون ادمن لفعل هذا الامر',
     'cannot_delete_last_image' => 'لا تستطيع حذف اخر صورة',
-    'delete_offer' => 'تم حذف العرض بنجاح'
+    'delete_offer' => 'تم حذف العرض بنجاح',
+    'product_whishlistes' => 'هذا المنتج موجود من قبل'
 ];

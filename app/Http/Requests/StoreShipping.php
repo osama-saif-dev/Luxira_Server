@@ -23,7 +23,8 @@ class StoreShipping extends FormRequest
     {
         $shipping_id = $this->route('id');
         return [
-            'city' => "required|string|unique:shippings,city,$shipping_id,id",
+            'city_en' => "required|string|unique:shippings,city->en,$shipping_id,id",
+            'city_ar' => "required|string|unique:shippings,city->ar,$shipping_id,id",
             'price' => 'required|integer'
         ];
     }

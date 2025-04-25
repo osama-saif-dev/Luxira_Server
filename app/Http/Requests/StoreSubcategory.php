@@ -22,7 +22,8 @@ class StoreSubcategory extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => "required|string|unique:brands",
+            'name_en' => "required|string|unique:subcategories,name->en",
+            'name_ar' => "required|string|unique:subcategories,name->ar",
             'image' => 'required|file|mimes:png,jpg,jpeg|max:3072',
             'status' => 'required|string|in:active,un_active',
             'category_id' => 'required|integer|exists:categories,id'

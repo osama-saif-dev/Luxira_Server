@@ -23,7 +23,8 @@ class UpdateSubcategory extends FormRequest
     {
         $subcategory_id = $this->route('id');
         return [
-            'name' => "required|string|unique:brands,name,$subcategory_id,id",
+            'name_en' => "required|string|unique:subcategories,name->en,$subcategory_id,id",
+            'name_ar' => "required|string|unique:subcategories,name->ar,$subcategory_id,id",
             'image' => 'nullable|file|mimes:png,jpg,jpeg|max:3072',
             'status' => 'required|string|in:active,un_active',
             'category_id' => 'required|integer|exists:categories,id'

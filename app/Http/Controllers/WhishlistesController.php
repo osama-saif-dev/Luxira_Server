@@ -15,36 +15,45 @@ class WhishlistesController extends Controller
     public function index()
     {
         $user_id = Auth::id();
-    
+
         $whishlistes = Whishliste::where('user_id', $user_id)
-            ->with('product.images')
-            ->get()
-            ->each(function ($wishlist) {
-                $wishlist->product->image_url = $wishlist->product->images->map(fn($image) => asset('images/products/' . $image->image));
-                $wishlist->product->setHidden(['images']);
-            });
-    
+            ->with([
+                'product.images',
+                'product.sizes',
+                'product.colors'
+            ])
+            ->get();
+
+        $whishlistes->each(function ($whishliste) {
+            $whishliste->product?->makeHidden(['name', 'desc']);
+            $whishliste->product?->sizes?->each->makeHidden(['size']);
+            $whishliste->product?->colors?->each->makeHidden(['name']);
+        });
+
         return $this->data(compact('whishlistes'));
     }
 
-    public function create($id)
+    public function store($id)
     {
-        $user_id = Auth::user()->id;
-        $whishlistes = Whishliste::where('product_id', $id)->where('user_id', $user_id)->first();
-        if (!$whishlistes) {
+        $user_id = Auth::id();
+        $product_whishliste = Whishliste::where('user_id', $user_id)
+                    ->where('product_id', $id)->first();
+        if (!$product_whishliste)
+        {
             Whishliste::create([
-                'user_id' => $user_id,
-                'product_id' => $id
+                'product_id' => $id,
+                'user_id' => $user_id
             ]);
-            return $this->successMessage('Created Successfully');
+            return $this->successMessage(__('messages.create'));
         }
-        return $this->successMessage('This Product Exists In Your Whishliste');
+        return $this->errorsMessage(['error' => __('messages.product_whishlistes')]);
     }
 
     public function delete($id)
     {
         $user_id = Auth::user()->id;
         Whishliste::where('id', $id)->where('user_id', $user_id)->delete();
-        return $this->successMessage('Deleted Successfully');
+        return $this->successMessage(__('messages.delete'));
     }
+
 }

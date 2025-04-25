@@ -9,10 +9,10 @@ use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\OfferController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\SubcategoryController;
 use App\Http\Controllers\VerifyController;
 use App\Http\Controllers\WhishlistesController;
 use Illuminate\Support\Facades\Route;
-
 
 // Clean Up 
 Route::get('/offer/clean_up', [OfferController::class, 'cleanUp']);
@@ -25,10 +25,10 @@ Route::prefix('/')->middleware('check.lang')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/resetPassword', [AuthController::class, 'resetPassword']);
     Route::post('/verifyForgetPassword', [VerifyController::class, 'verifyForgetPassword']);
+    Route::post('/refresh-token', [AuthController::class, 'refreshToken']);
     
     // With Token 
     Route::prefix('/auth')->middleware('auth:sanctum')->group(function () {
-        Route::post('/refresh-token', [AuthController::class, 'refreshToken']);
         Route::get('/logout', [AuthController::class, 'logout']);
         Route::get('/sendCode', [VerifyController::class, 'sendCode']);
         Route::post('/checkCode', [VerifyController::class, 'checkCode']);
@@ -48,6 +48,11 @@ Route::prefix('/')->middleware('check.lang')->group(function () {
     Route::prefix('/categories')->group(function () {
         Route::get('/', [CategoryController::class, 'index']);
     });
+
+    // Subcategories
+    Route::prefix('/subcategories')->group(function () {
+        Route::get('/', [SubcategoryController::class, 'index']);
+    });
     
     // Products
     Route::prefix('/product')->group(function () {
@@ -60,18 +65,20 @@ Route::prefix('/')->middleware('check.lang')->group(function () {
     // Whishlistes
     Route::prefix('/whishlistes')->middleware('auth:sanctum')->group(function () {
         Route::get('/', [WhishlistesController::class, 'index']);
-        Route::get('/create/{id}', [WhishlistesController::class, 'create']);
+        Route::get('/store/{id}', [WhishlistesController::class, 'store']);
         Route::delete('/delete/{id}', [WhishlistesController::class, 'delete']);
     });
     
     // Cart
     Route::prefix('/cart')->middleware('auth:sanctum')->group(function () {
         Route::get('/', [CartController::class, 'index']);
-        Route::post('/create', [CartController::class, 'create']);
-        Route::delete('/delete/{id}', [CartController::class, 'delete']);
+        Route::post('/store', [CartController::class, 'store']);
+        Route::delete('/delete_cart/{id}', [CartController::class, 'deleteCart']);
+        Route::delete('/delete_product/{id}', [CartController::class, 'deleteProduct']);
     });
-    
+
     // Reviews 
+    
 
     // Order
     Route::prefix('/order')->middleware('auth:sanctum')->group(function () {

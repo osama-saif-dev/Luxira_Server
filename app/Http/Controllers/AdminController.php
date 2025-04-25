@@ -96,18 +96,21 @@ class AdminController extends Controller
     public function storeBrand(StoreBrand $request)
     {
         $photoName = $this->storeImage($request->image, 'brands');
-        Brand::create([
-            'name' => $request->name,
-            'image' => $photoName,
-            'status' => $request->status
+        $brand = new Brand();
+        $brand->image = $photoName;
+        $brand->status = $request->status;
+        $brand->setTranslations('name', [
+            'en' => $request->name_en,
+            'ar' => $request->name_ar
         ]);
+        $brand->save();
         return $this->successMessage(__('messages.create'), 201);
     }
 
     public function updateBrand(UpdateBrand $request, $id)
     {
         $brand = Brand::findOrFail($id);
-        $data = $request->except('image');
+        $data = $request->except('image', 'name_en', 'name_ar');
 
         if ($request->hasFile('image')) {
             // delete old photo
@@ -117,13 +120,20 @@ class AdminController extends Controller
             $data['image'] = $photoName;
         }
 
+        $brand->setTranslations('name', [
+            'en' => $request->name_en,
+            'ar' => $request->name_ar
+        ]);
+
         $brand->update($data);
+
         return $this->successMessage(__('messages.update'));
     }
 
-    public function showBrand($id)
+    public function showBrand(Request $request, $id)
     {
-        $brand = Brand::find($id);
+        $locale = $request->header('Accept-Language');
+        $brand = Brand::findOrFail($id);
         return $this->data(compact('brand'));
     }
 
@@ -140,18 +150,21 @@ class AdminController extends Controller
     public function storeCategory(StoreCategory $request)
     {
         $photoName = $this->storeImage($request->image, 'categories');
-        Category::create([
-            'name' => $request->name,
-            'image' => $photoName,
-            'status' => $request->status,
+        $category = new Category();
+        $category->image = $photoName;
+        $category->status = $request->status;
+        $category->setTranslations('name', [
+            'en' => $request->name_en,
+            'ar' => $request->name_ar
         ]);
+        $category->save();
         return $this->successMessage(__('messages.create'), 201);
     }
 
     public function updateCategory(UpdateCategory $request, $id)
     {
         $category = Category::findOrFail($id);
-        $data = $request->except('image');
+        $data = $request->except('image', 'name_en', 'name_ar');
 
         if ($request->hasFile('image')) {
             // delete old photo
@@ -161,13 +174,19 @@ class AdminController extends Controller
             $data['image'] = $photoName;
         }
 
+        $category->setTranslations('name', [
+            'en' => $request->name_en,
+            'ar' => $request->name_ar
+        ]);
+
         $category->update($data);
+
         return $this->successMessage(__('messages.update'));
     }
 
     public function showCategory($id)
     {
-        $category = Category::find($id);
+        $category = Category::findOrFail($id);
         return $this->data(compact('category'));
     }
 
@@ -184,19 +203,22 @@ class AdminController extends Controller
     public function storeSubcategory(StoreSubcategory $request)
     {
         $photoName = $this->storeImage($request->file('image'), 'subcategories');
-        Subcategory::create([
-            'name' => $request->name,
-            'image' => $photoName,
-            'status' => $request->status,
-            'category_id' => $request->category_id
+        $subcategory = new Subcategory();
+        $subcategory->image = $photoName;
+        $subcategory->status = $request->status;
+        $subcategory->category_id = $request->category_id;
+        $subcategory->setTranslations('name', [
+            'en' => $request->name_en,
+            'ar' => $request->name_ar
         ]);
+        $subcategory->save();
         return $this->successMessage(__('messages.create'), 201);
     }
 
     public function updateSubcategory(UpdateSubcategory $request, $id)
     {
         $subcategory = Subcategory::findOrFail($id);
-        $data = $request->except('image');
+        $data = $request->except('image', 'name_en', 'name_ar');
 
         if ($request->hasFile('image')) {
             // delete old photo
@@ -205,6 +227,11 @@ class AdminController extends Controller
             $photoName = $this->storeImage($request->file('image'), 'subcategories');
             $data['image'] = $photoName;
         }
+
+        $subcategory->setTranslations('name', [
+            'en' => $request->name_en,
+            'ar' => $request->name_ar
+        ]);
 
         $subcategory->update($data);
         return $this->successMessage(__('messages.update'));
@@ -252,7 +279,15 @@ class AdminController extends Controller
     {
         return DB::transaction(function () use ($request) {
 
-            $data = $request->except('image', 'size_id', 'color_id');
+            $data = $request->except('image', 'size_id', 'color_id', 'name_en', 'name_ar', 'desc_en', 'desc_ar');
+            $data['name'] = [
+                'en' => $request->name_en,
+                'ar' => $request->name_ar,
+            ];
+            $data['desc'] = [
+                'en' => $request->desc_en,
+                'ar' => $request->desc_ar,
+            ];
             $product = Product::create($data);
 
             // sync بتحذف العلاقات sizes , colors حتى لو array القديمه وتضيف الجديد 
@@ -278,7 +313,15 @@ class AdminController extends Controller
         return DB::transaction(function () use ($request, $id) {
 
             $product = Product::findOrFail($id);
-            $data = $request->except('image', 'size_id', 'color_id');
+            $data = $request->except('image', 'size_id', 'color_id', 'name_en', 'name_ar', 'desc_en', 'desc_ar');
+            $data['name'] = [
+                'en' => $request->name_en,
+                'ar' => $request->name_ar,
+            ];
+            $data['desc'] = [
+                'en' => $request->desc_en,
+                'ar' => $request->desc_ar,
+            ];
             $product->update($data);
 
             // sync بتحذف العلاقات sizes , colors حتى لو array القديمه وتضيف الجديد 
@@ -365,7 +408,12 @@ class AdminController extends Controller
 
     public function storeSize(StoreSize $request)
     {
-        Size::create($request->validated());
+        $size = new Size();
+        $size->setTranslations('size', [
+            'en' => $request->size_en,
+            'ar' => $request->size_ar,
+        ]);
+        $size->save();
         return $this->successMessage(__('messages.create'), 201);
     }
 
@@ -392,7 +440,12 @@ class AdminController extends Controller
 
     public function storeColor(StoreColor $request)
     {
-        Color::create($request->validated());
+        $color = new Color();
+        $color->setTranslations('name', [
+            'en' => $request->name_en,
+            'ar' => $request->name_ar,
+        ]);
+        $color->save();
         return $this->successMessage(__('messages.create'), 201);
     }
 
@@ -455,7 +508,13 @@ class AdminController extends Controller
 
     public function storeShipping(StoreShipping $request)
     {
-        Shipping::create($request->validated());
+        $shipping = new Shipping();
+        $shipping->setTranslations('city', [
+            'en' => $request->city_en,
+            'ar' => $request->city_ar,
+        ]);
+        $shipping->price = $request->price;
+        $shipping->save();
         return $this->successMessage(__('messages.create'), 201);
     }
 

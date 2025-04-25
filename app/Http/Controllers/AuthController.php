@@ -52,15 +52,16 @@ class AuthController extends Controller
 
     public function refreshToken(RefreshTokenRequest $request)
     {
-        $user = Auth::user();
         
-        $token = $this->isValidRefreshToken($user, $request->refresh_token);
-        
+        $token = $this->isValidRefreshToken($request->refresh_token);
+
         // here you should navigate to login page
         if (!$token){
             return $this->errorsMessage(['error' => __('messages.refresh_token')]);
         }
-    
+
+        $user  = $token->user ;
+
         $access_token = $this->generateNewAccessToken($user);
         $refresh_token = $this->storeRefreshToken($user);
     

@@ -10,13 +10,13 @@ trait HandleToken
 {
     use HandleResponse;
 
-    public function isValidRefreshToken($user, $refresh_token_input)
+    public function isValidRefreshToken($refresh_token_input)
     {
-        $token = RefreshToken::where('user_id', $user->id)
-            ->where('expire_at', '>', now())
-            ->first();
-        if ($token && Hash::check($refresh_token_input, $token->refresh_token)) {
-            return $token;
+        $tokens = RefreshToken::where('expire_at', '>', now())->get();
+        foreach ($tokens as $token) {
+            if (Hash::check($refresh_token_input, $token->refresh_token)) {
+                return $token;
+            }
         }
         return null;
     }

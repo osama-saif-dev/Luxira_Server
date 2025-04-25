@@ -22,7 +22,8 @@ class StoreColor extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => "required|string|unique:colors"
+            'name_en' => "required|string|unique:colors,name->en",
+            'name_ar' => "required|string|unique:colors,name->ar"
         ];
     }
 }

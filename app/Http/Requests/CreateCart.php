@@ -22,8 +22,10 @@ class CreateCart extends FormRequest
     public function rules(): array
     {
         return [
-            'product_id' => 'required|integer',
-            'quantity' => 'required|integer'
+            'product_id' => 'required|integer|exists:products,id',
+            'quantity' => 'required|integer|min:1',
+            'size_id' => 'required|integer|exists:sizes,id',
+            'color_id' => 'required|integer|exists:colors,id',
         ];
     }
 }

@@ -10,8 +10,19 @@ class OfferController extends Controller
 {
     use HandleResponse;
 
-    public function index(){
-        $offers = Offer::all();
+    public function index(Request $request)
+    {
+        $offers = Offer::with('product.images')->get()
+                    ->map(function ($offer) {
+                        $product = $offer->product;
+                        
+                        $original_price = $product->price;
+                        $discount = $offer->discount_percentage;
+                        $offer->new_price = $original_price - ($original_price * $discount / 100);
+
+                        $product->makeHidden(['name', 'desc']);
+                        return $offer;
+                    });
         return $this->data(compact('offers'));
     }
 
@@ -20,5 +31,4 @@ class OfferController extends Controller
         Offer::where('end_date', '<', now())->delete();
         return $this->successMessage(__('messages.delete_offer'));
     }
-    
 }

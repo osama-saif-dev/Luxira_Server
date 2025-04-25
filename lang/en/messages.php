@@ -17,5 +17,6 @@ return [
     'reset_password' => 'Email Or Token Is Not Valid',
     'check_is_admin' => 'You Must Be Admin To Make This ',
     'cannot_delete_last_image' => 'You Can Not Delete Last Image',
-    'delete_offer' => 'Delete Offer Successfully'
+    'delete_offer' => 'Delete Offer Successfully',
+    'product_whishlistes' => 'This Product Is Exists'
 ];

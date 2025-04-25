@@ -23,7 +23,8 @@ class UpdateCategory extends FormRequest
     {
         $category_id = $this->route('id');
         return [
-            'name' => "required|string|unique:brands,name,$category_id,id",
+            'name_en' => "required|string|unique:brands,name->en,$category_id,id",
+            'name_ar' => "required|string|unique:brands,name->ar,$category_id,id",
             'image' => 'nullable|file|mimes:png,jpg,jpeg|max:3072',
             'status' => 'required|string|in:active,un_active'
         ];
