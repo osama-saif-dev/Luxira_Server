@@ -60,7 +60,7 @@ class AuthController extends Controller
             return $this->errorsMessage(['error' => __('messages.refresh_token')]);
         }
 
-        $user  = $token->user ;
+        $user  = $token->user;
 
         $access_token = $this->generateNewAccessToken($user);
         $refresh_token = $this->storeRefreshToken($user);

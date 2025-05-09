@@ -127,6 +127,7 @@ Route::prefix('/')->middleware('check.lang')->group(function () {
         // Products
         Route::prefix('/products')->group(function() {
             Route::get('/', [AdminController::class, 'getProducts']);
+            Route::get('/getDataToProduct', [AdminController::class, 'getDataToProduct']);
             Route::get('/show/{id}', [AdminController::class, 'showProduct']);
             Route::post('/store', [AdminController::class, 'storeProduct']);
             Route::post('/update/{id}', [AdminController::class, 'updateProduct']);

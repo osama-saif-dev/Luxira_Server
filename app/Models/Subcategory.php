@@ -13,7 +13,7 @@ class Subcategory extends Model
     protected $guarded = [];
     protected $appends = ['image_url', 'translatable_name'];
     protected $translatable = ['name'];
-
+    
     public function getTranslatableNameAttribute()
     {
         return $this->getTranslation('name', app()->getLocale());

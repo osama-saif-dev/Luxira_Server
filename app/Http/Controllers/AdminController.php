@@ -275,6 +275,15 @@ class AdminController extends Controller
         return $this->data(compact('product'));
     }
 
+    public function getDataToProduct()
+    {
+        $subcategories = Subcategory::all()->makeHidden('name');
+        $brands = Brand::all()->makeHidden('name');
+        $colors = Color::all()->makeHidden('name');
+        $sizes = Size::all()->makeHidden('size');
+        return $this->data(compact('subcategories', 'brands', 'colors', 'sizes'));
+    }
+
     public function storeProduct(StoreProduct $request)
     {
         return DB::transaction(function () use ($request) {
