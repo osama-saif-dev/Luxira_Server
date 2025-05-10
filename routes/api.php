@@ -104,6 +104,7 @@ Route::prefix('/')->middleware('check.lang')->group(function () {
         Route::prefix('/brands')->group(function() {
             Route::get('/', [AdminController::class, 'getBrands']);
             Route::get('/show/{id}', [AdminController::class, 'showBrand']);
+            Route::delete('/delete/{id}', [AdminController::class, 'deleteBrand']);
             Route::post('/store', [AdminController::class, 'storeBrand']);
             Route::post('/update/{id}', [AdminController::class, 'updateBrand']);
         });
@@ -112,6 +113,7 @@ Route::prefix('/')->middleware('check.lang')->group(function () {
         Route::prefix('/categories')->group(function() {
             Route::get('/', [AdminController::class, 'getCategories']);
             Route::get('/show/{id}', [AdminController::class, 'showCategory']);
+            Route::delete('/delete/{id}', [AdminController::class, 'deleteCategory']);
             Route::post('/store', [AdminController::class, 'storeCategory']);
             Route::post('/update/{id}', [AdminController::class, 'updateCategory']);
         });     
@@ -120,6 +122,7 @@ Route::prefix('/')->middleware('check.lang')->group(function () {
         Route::prefix('/subcategories')->group(function() {
             Route::get('/', [AdminController::class, 'getSubcategories']);
             Route::get('/show/{id}', [AdminController::class, 'showSubcategory']);
+            Route::delete('/delete/{id}', [AdminController::class, 'deleteSubcategory']);
             Route::post('/store', [AdminController::class, 'storeSubcategory']);
             Route::post('/update/{id}', [AdminController::class, 'updateSubcategory']);
         });    
@@ -131,6 +134,7 @@ Route::prefix('/')->middleware('check.lang')->group(function () {
             Route::get('/show/{id}', [AdminController::class, 'showProduct']);
             Route::post('/store', [AdminController::class, 'storeProduct']);
             Route::post('/update/{id}', [AdminController::class, 'updateProduct']);
+            Route::delete('/delete/{id}', [AdminController::class, 'deleteProduct']);
             Route::delete('/delete_image/{productId}/{imageId}', [AdminController::class, 'deleteImage']);
         });
 

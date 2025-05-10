@@ -137,7 +137,11 @@ class AdminController extends Controller
         return $this->data(compact('brand'));
     }
 
-
+    public function deleteBrand($id)
+    {
+        Brand::find($id)->delete();
+        return $this->successMessage(__('messages.delete'));
+    }
 
     ################################ Categories ################################
 
@@ -190,7 +194,12 @@ class AdminController extends Controller
         return $this->data(compact('category'));
     }
 
+    public function deleteCategory($id)
+    {
 
+        Category::find($id)->delete();
+        return $this->successMessage(__('messages.delete'));
+    }
 
     ################################ Subcategories ################################
 
@@ -241,6 +250,14 @@ class AdminController extends Controller
     {
         $subcategory = Subcategory::find($id);
         return $this->data(compact('subcategory'));
+    }
+
+
+    public function deleteSubcategory($id)
+    {
+
+        Subcategory::find($id)->delete();
+        return $this->successMessage(__('messages.delete'));
     }
 
 
@@ -365,7 +382,15 @@ class AdminController extends Controller
     }
 
 
+    public function deleteProduct($id)
+    {
 
+        Product::find($id)->delete();
+        return $this->successMessage(__('messages.delete'));
+    }
+
+
+    
     ################################ Offers ################################
 
     public function getOffers()
