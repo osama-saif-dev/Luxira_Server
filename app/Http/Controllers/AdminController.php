@@ -296,7 +296,7 @@ class AdminController extends Controller
     {
         $subcategories = Subcategory::all()->makeHidden('name');
         $brands = Brand::all()->makeHidden('name');
-        $colors = Color::all()->makeHidden('name');
+        $colors = Color::all();
         $sizes = Size::all()->makeHidden('size');
         return $this->data(compact('subcategories', 'brands', 'colors', 'sizes'));
     }
@@ -475,10 +475,7 @@ class AdminController extends Controller
     public function storeColor(StoreColor $request)
     {
         $color = new Color();
-        $color->setTranslations('name', [
-            'en' => $request->name_en,
-            'ar' => $request->name_ar,
-        ]);
+        $color->name = $request->name;
         $color->save();
         return $this->successMessage(__('messages.create'), 201);
     }

@@ -12,17 +12,20 @@ class OfferController extends Controller
 
     public function index(Request $request)
     {
-        $offers = Offer::with('product.images')->get()
-                    ->map(function ($offer) {
-                        $product = $offer->product;
-                        
-                        $original_price = $product->price;
-                        $discount = $offer->discount_percentage;
-                        $offer->new_price = $original_price - ($original_price * $discount / 100);
+        $all = filter_var($request->query('all'), FILTER_VALIDATE_BOOLEAN);
 
-                        $product->makeHidden(['name', 'desc']);
-                        return $offer;
-                    });
+        $offers = Offer::with('product.images', 'product.sizes', 'product.colors')
+            ->when(!$all, fn($query) => $query->take(4))
+            ->get();
+
+        $offers->each(function ($offer) {
+            $product = $offer->product;
+
+            $offer->new_price = $product->price - ($product->price * $offer->discount_percentage / 100);
+            $product->sizes->makeHidden(['size']);
+            $product->makeHidden(['name', 'desc']);
+        });
+
         return $this->data(compact('offers'));
     }
 

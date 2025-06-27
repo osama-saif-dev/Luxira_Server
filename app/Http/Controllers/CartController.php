@@ -87,5 +87,6 @@ class CartController extends Controller
     {
         $cart = Cart::where('user_id', Auth::id());
         ProductCart::where('cart_id', $cart->id)->where('product_id', $id)->delete();
+        return $this->successMessage(__('messages.delete')); 
     }
 }

@@ -9,6 +9,7 @@ use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\OfferController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\SubcategoryController;
 use App\Http\Controllers\VerifyController;
 use App\Http\Controllers\WhishlistesController;
@@ -78,7 +79,11 @@ Route::prefix('/')->middleware('check.lang')->group(function () {
     });
 
     // Reviews 
-    
+    Route::prefix('/review')->middleware(('auth:sanctum'))->group(function () {
+        Route::post('/store', [ReviewController::class, 'store']);
+        Route::post('/update/{id}', [ReviewController::class, 'update']);
+        Route::delete('/delete/{id}', [ReviewController::class, 'delete']);
+    });
 
     // Order
     Route::prefix('/order')->middleware('auth:sanctum')->group(function () {

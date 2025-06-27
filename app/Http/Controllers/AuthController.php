@@ -63,9 +63,8 @@ class AuthController extends Controller
         $user  = $token->user;
 
         $access_token = $this->generateNewAccessToken($user);
-        $refresh_token = $this->storeRefreshToken($user);
     
-        return $this->data(compact('user', 'access_token', 'refresh_token'), __('messages.update'));
+        return $this->data(compact('user', 'access_token'), __('messages.update'));
     }
 
     public function logout()

@@ -40,15 +40,12 @@ class OrderController extends Controller
     public function create(CreateOrder $req)
     {
         DB::transaction(function () use ($req){
-
             $user_id = Auth::id();
             $cart_items = Cart::with('product.images')->where('user_id', $user_id)->get();
-
             $sub_total = $cart_items->sum(fn($cart) => $cart->product->price * $cart->quantity);
             $discount = Discount::find($req->discount_id)->price ?? 0;
             $shipping = Shipping::find($req->shipping_id)?->price ?? 0;
             $total = max($sub_total - $discount + $shipping, 0);
-            
             $order = Order::create([
                 'first_name' => $req->first_name,
                 'last_name' => $req->last_name,
@@ -61,9 +58,7 @@ class OrderController extends Controller
                 'shipping_id' => $req->shipping_id,
                 'sub_total' => $sub_total,
                 'total' => $total
-            ]);
-
-            
+            ]);            
             $cart_items->each(function($cart) use ($order){
                 OrderItems::create([
                     'product_id' => $cart->product->id,
@@ -72,7 +67,6 @@ class OrderController extends Controller
                     'quantity' => $cart->quantity
                 ]);
             });
-
             Cart::where('user_id', $user_id)->delete();
         });
         return $this->successMessage('Created Successfully');

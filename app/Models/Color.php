@@ -12,13 +12,6 @@ class Color extends Model
 
     protected $guarded = [];
     protected $hidden = ['pivot'];
-    protected $appends = ['translatable_name'];
-    protected $translatable = ['name'];
-
-    public function getTranslatableNameAttribute() 
-    {
-        return $this->getTranslation('name', app()->getLocale());
-    }
 
     public function products()
     {

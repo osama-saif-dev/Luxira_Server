@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Color;
 use App\Models\Product;
@@ -20,6 +21,7 @@ class ProductController extends Controller
     {
         $subcategories = Subcategory::all();
         $categories = Category::all();
+        $brands = Brand::all();
         $colors = Color::all();
         $sizes = Size::all();
         return $this->data(compact('categories', 'subcategories', 'colors', 'sizes'));
@@ -51,17 +53,18 @@ class ProductController extends Controller
                 fn($q) =>
                 $q->whereHas('sizes', fn($q) => $q->where('sizes.id', $req->size_id))
             )
-            ->with(['images'])
+            ->where('status', 'active')
+            ->with(['images', 'colors', 'sizes'])
             ->withAvg('reviews', 'rate')
-            ->paginate(9);
+            ->paginate(12);
 
-        $products->transform(function ($product) {
-            $product->image_urls = $product->images->map(fn($image) => asset('images/products/' . $image->image));
+        $products->each(function ($product) {
             $product->reviews_avg_rate = round($product->reviews_avg_rate) + 0;
-            return $product->makeHidden(['images','reviews']);
+            $product->makeHidden(['reviews','desc','name']);
         });
 
         $total_pages = $products->lastPage();
+        $products = $products->items();
 
         return $this->data(compact('products', 'total_pages'));
     }
@@ -82,33 +85,24 @@ class ProductController extends Controller
         // change to integer  
         $product->reviews_avg_rate = round($product->reviews_avg_rate) + 0;
 
-        $product->images_url = $product->images->map(function ($image) {
-            return asset('images/products/' . $image->image);
-        });
-
-        $product->reviews->each(fn($review) => $review->user->image_url = asset('images/users/' . $review->user->image));
-
-        // لو بعت كويري هبعت كل البيانات غير كدا 8
-        $limit = $req->query('all') == true ? null : 8;
-
         $similar_products_query = Product::where('subcategory_id', $product->subcategory_id)
         ->where('id', '!=', $product->id)
-        ->withAvg('reviews', 'rate');
+        ->with('images', 'sizes', 'colors')
+        ->where('status', 'active')
+        ->withAvg('reviews', 'rate')
+        ->paginate(1);
+
+        $similar_products_query->each(fn ($product) => $product->reviews_avg_rate = round($product->reviews_avg_rate) + 0);
         
-        if($limit){
-            $similar_products_query->take($limit);
-        }
+        $total_pages = $similar_products_query->lastPage();
+        $similar_products = $similar_products_query->items();
 
-        $similar_products = $similar_products_query->get()->map(function ($product) {
-            $product->reviews_avg_rate = round($product->reviews_avg_rate);
-            $product->images_url = $product->images->map(fn($image) => asset('images/products/' . $image->image));
-            return $product->makeHidden('images');
+        collect($similar_products)->each(function ($product) {
+            $product->makeHidden(['name', 'desc']);
         });
+        $product->colors->makeHidden(['pivot']); 
+        $product->sizes->makeHidden(['pivot','size']); 
 
-        $product->makeHidden('images');
-        $product->colors->makeHidden('pivot'); 
-        $product->sizes->makeHidden('pivot'); 
-
-        return $this->data(compact('product', 'similar_products'));
+        return $this->data(compact('product', 'similar_products', 'total_pages'));
     }
 }

@@ -26,10 +26,10 @@ return [
     'before' => 'The :attribute field must be a date before :date.',
     'before_or_equal' => 'The :attribute field must be a date before or equal to :date.',
     'between' => [
-        'array' => 'The :attribute field must have between :min and :max items.',
-        'file' => 'The :attribute field must be between :min and :max kilobytes.',
-        'numeric' => 'The :attribute field must be between :min and :max.',
-        'string' => 'The :attribute field must be between :min and :max characters.',
+    'array' => 'يجب أن يحتوي :attribute على عدد من العناصر بين :min و :max.',
+    'file' => 'يجب أن يكون حجم الملف :attribute بين :min و :max كيلوبايت.',
+    'numeric' => 'يجب أن تكون قيمة :attribute بين :min و :max.',
+    'string' => 'يجب أن يكون طول النص :attribute بين :min و :max حروف.',
     ],
     'boolean' => 'The :attribute field must be true or false.',
     'can' => 'The :attribute field contains an unauthorized value.',
@@ -215,7 +215,9 @@ return [
         'size_en' => 'الحجم بالانجليزي',
         'size_ar' => 'الحجم بالعربي',
         'city_en' => 'المدينة بالانجليزي',
-        'city_ar' => 'المدينة بالعربي'
-    ], 
+        'city_ar' => 'المدينة بالعربي',
+        'comment' => 'التعليق',
+        'rate' => 'التقييم'
+    ],  
 
 ];
