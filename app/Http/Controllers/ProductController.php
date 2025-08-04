@@ -54,7 +54,7 @@ class ProductController extends Controller
                 $q->whereHas('sizes', fn($q) => $q->where('sizes.id', $req->size_id))
             )
             ->where('status', 'active')
-            ->with(['images', 'colors', 'sizes'])
+            ->with(['images', 'colors', 'sizes', 'whishlistes'])
             ->withAvg('reviews', 'rate')
             ->paginate(12);
 
@@ -87,7 +87,7 @@ class ProductController extends Controller
 
         $similar_products_query = Product::where('subcategory_id', $product->subcategory_id)
         ->where('id', '!=', $product->id)
-        ->with('images', 'sizes', 'colors')
+        ->with('images', 'sizes', 'colors', 'whishlistes')
         ->where('status', 'active')
         ->withAvg('reviews', 'rate')
         ->paginate(1);

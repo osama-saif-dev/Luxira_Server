@@ -28,8 +28,9 @@ class CreateOrder extends FormRequest
             'phone' => 'required|string',
             'address' => 'required|string',
             'comment' => 'required|string',
-            'discount_id' => 'required|integer',
-            'shipping_id' => 'required|integer',
+            'discount_id' => 'required|integer|exists:discounts,id',
+            'shipping_id' => 'required|integer|exists:shippings,id',
+            'payment_method' => 'required|string|in:cache,paypal,stripe'
         ];
     }
 }

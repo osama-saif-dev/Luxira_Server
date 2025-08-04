@@ -8,6 +8,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\OfferController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\SubcategoryController;
@@ -90,6 +91,12 @@ Route::prefix('/')->middleware('check.lang')->group(function () {
         Route::get('/', [OrderController::class, 'index']);
         Route::post('/create', [OrderController::class, 'create']);
         Route::delete('/delete/{id}', [OrderController::class, 'delete']);
+    });
+
+    // Payments
+    Route::prefix('/payment')->middleware('auth:sanctum')->group(function () {
+        Route::get('/success_paypal', [PaymentController::class, 'successPaypal']);
+        Route::get('/success_stripe', [PaymentController::class, 'successStripe']);
     });
 
     // Admin

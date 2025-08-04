@@ -14,7 +14,7 @@ class OfferController extends Controller
     {
         $all = filter_var($request->query('all'), FILTER_VALIDATE_BOOLEAN);
 
-        $offers = Offer::with('product.images', 'product.sizes', 'product.colors')
+        $offers = Offer::with('product.images', 'product.sizes', 'product.colors', 'product.whishlistes')
             ->when(!$all, fn($query) => $query->take(4))
             ->get();
 

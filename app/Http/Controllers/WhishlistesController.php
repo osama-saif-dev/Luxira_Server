@@ -52,7 +52,7 @@ class WhishlistesController extends Controller
     public function delete($id)
     {
         $user_id = Auth::user()->id;
-        Whishliste::where('id', $id)->where('user_id', $user_id)->delete();
+        Whishliste::where('product_id', $id)->where('user_id', $user_id)->delete();
         return $this->successMessage(__('messages.delete'));
     }
 

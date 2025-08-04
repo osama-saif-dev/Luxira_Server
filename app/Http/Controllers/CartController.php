@@ -19,18 +19,24 @@ class CartController extends Controller
     public function index()
     {
         $cart = Cart::where('user_id', Auth::id())->first();
+        if (!$cart) {
+                return $this->data([
+                    'cart_products' => [],
+                    'total_price' => 0
+                ]);
+            }
         $cart_products = ProductCart::with([
             'product.images',
             'size',
             'color',
         ])->where('cart_id', $cart->id)->get()
-        ->map(function ($q) {
-            $q->product->makeHidden(['name', 'desc']);
-            $q->size?->makeHidden(['size']);
-            $q->color?->makeHidden(['name']);
-            $q['total_price'] = $q->quantity * $q->product->price;
-            return $q;
-        });
+            ->map(function ($q) {
+                $q->product->makeHidden(['name', 'desc']);
+                $q->size?->makeHidden(['size']);
+                $q->color?->makeHidden(['name']);
+                $q['total_price'] = $q->quantity * $q->product->price;
+                return $q;
+            });
         $total_price = $cart_products->sum('total_price');
         return $this->data(compact('cart_products', 'total_price'));
     }
@@ -47,33 +53,32 @@ class CartController extends Controller
         $product = Product::find($req->product_id);
 
         $cart_product = ProductCart::where('cart_id', $cart->id)
-                        ->where('color_id', $req->color_id)
-                        ->where('size_id', $req->size_id)
-                        ->where('product_id', $req->product_id)
-                        ->first();
+            ->where('color_id', $req->color_id)
+            ->where('size_id', $req->size_id)
+            ->where('product_id', $req->product_id)
+            ->first();
 
-        if (!$cart_product)
-        {
-            if ($req->quantity <= $product->quantity){
-                ProductCart::create([
+        if (!$cart_product) {
+            if ($req->quantity <= $product->quantity) {
+                $newProduct = ProductCart::create([
                     'cart_id' => $cart->id,
                     'product_id' => $req->product_id,
                     'color_id' => $req->color_id,
                     'size_id' => $req->size_id,
                     'quantity' => $req->quantity,
                 ]);
-    
-                return $this->successMessage(__('messages.create'));
 
+                return $this->data(compact('newProduct'), __('messages.create'));
             } else {
                 return $this->errorsMessage(['This Quantity is Not Allowed']);
             }
-        }else 
-        {
+        } else {
             $cart_product->update([
-                'quantity' => $req->quantity
+                'quantity' => $req->quantity,
+                'color_id' => $req->color_id,
+                'size_id' => $req->size_id,
             ]);
-            return $this->successMessage(__('messages.update'));
+            return $this->data(compact('cart_product'), __('messages.update'));
         }
     }
 
@@ -87,6 +92,6 @@ class CartController extends Controller
     {
         $cart = Cart::where('user_id', Auth::id());
         ProductCart::where('cart_id', $cart->id)->where('product_id', $id)->delete();
-        return $this->successMessage(__('messages.delete')); 
+        return $this->successMessage(__('messages.delete'));
     }
 }
